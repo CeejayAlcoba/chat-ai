@@ -53,7 +53,7 @@ class Message {
 class OpenAiService {
   constructor() {
     this.URL = "https://api.openai.com/v1/chat/completions";
-    this.token = "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";
+    this.token = "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";
     this.model = "gpt-3.5-turbo";
   }
   async get(messages = []) {
@@ -87,7 +87,7 @@ const ErrorObjectChecker = (object = {}) => {
 
 let messenges = [];
 let chatMenus = [];
-let activeChatMenu = 0;
+let activeChatMenu = 1;
 let openAiService = new OpenAiService();
 const currentMessage = () => $("#message-input").val();
 const filteredMessage = () =>
@@ -122,6 +122,7 @@ const onSearchChatMenu = () => {
 };
 const onAddChatMenu = () => {
   const isValid = isInputValidation("chat-menu-title");
+
   if (isValid) {
     let lastMenuId =
       chatMenus.length == 0
@@ -159,8 +160,6 @@ const onSend = async () => {
       ...chatMenus,
       new ChatMenu({ chatMenuId: 1, title: message.substring(0, 11) + "..." }),
     ];
-    generateChatMenus();
-    generateChatHeader();
   }
 
   messenges = [
@@ -180,6 +179,8 @@ const onSend = async () => {
     ...messenges,
     { chatMenuId: activeChatMenu, ...choices[0].message },
   ];
+  generateChatMenus();
+  generateChatHeader();
   generateChats();
 };
 
@@ -204,10 +205,11 @@ const generateChats = () => {
 };
 const generateChatHeader = () => {
   $(".chat-header").empty();
+  console.log(chatMenus, activeChatMenu);
   let foundChatMenu = chatMenus.find(
     (menu) => menu?.chatMenuId == activeChatMenu
   );
-  let chatMenu = new ChatMenu(foundChatMenu ?? {});
+  let chatMenu = new ChatMenu(foundChatMenu);
   $(".chat-header").append(chatMenu.chatHeaderLayout());
 };
 const generateChatMenus = (initChatMenus) => {
